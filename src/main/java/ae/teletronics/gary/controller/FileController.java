@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -39,8 +40,14 @@ public class FileController {
         File fileInfo = new File();
         fileInfo.setFileName(file.getOriginalFilename());
         fileInfo.setVisibility(visibility);
+        fileInfo.setUserId("USER");
+        fileInfo.setSize(file.getSize());
+        fileInfo.setContentType(file.getContentType());
         fileInfo.setTags(tags);
+        fileInfo.setExtension(file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf('.')));
 
+        fileInfo.setUploadedAt(LocalDateTime.now());
+        fileInfo.setUpdatedAt(LocalDateTime.now());
         File result = fileService.saveFile(fileInfo);
 
         return ResponseEntity.ok(result);
@@ -62,6 +69,7 @@ public class FileController {
         }
 
         fileInfo.setFileName(filename);
+        fileInfo.setUpdatedAt(LocalDateTime.now());
         File result = fileService.saveFile(fileInfo);
         return ResponseEntity.ok(result);
     }
