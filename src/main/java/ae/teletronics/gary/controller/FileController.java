@@ -51,8 +51,8 @@ public class FileController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping(value = "/{id}/download", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public ResponseEntity<byte[]> download(@PathVariable("id") String id) throws IOException {
+    @GetMapping(value = "/download", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public ResponseEntity<byte[]> download(@RequestParam("id") String id) throws IOException {
         File file = fileService.findById(id);
         if (file == null) {
             return ResponseEntity.notFound().build();
