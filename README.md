@@ -24,6 +24,7 @@ This is a project that allows users to upload files to a server and download the
 
 ## Usage
 1. Open your browser and go to [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html).
+2. Here you can see all the available endpoints in Swagger page and test them.
 
 ## How to build JAR file
 ```shell
