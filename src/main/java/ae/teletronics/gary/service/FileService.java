@@ -63,4 +63,8 @@ public class FileService {
     public File findFirstByFileNameOrContentMd5(String fileName, String contentMd5) {
         return fileRepository.findFirstByFileNameOrContentMd5(fileName, contentMd5);
     }
+
+    public void deleteById(String id) {
+        fileRepository.deleteById(id);
+    }
 }
