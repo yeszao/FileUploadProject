@@ -92,7 +92,7 @@ class FileControllerTest {
                         .param("size", String.valueOf(size))
                         .param("sortBy", sortBy))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.content", Matchers.hasSize(1))); // Adjust as per your expected JSON response structure
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content", Matchers.hasSize(1)));
     }
 
     @Test

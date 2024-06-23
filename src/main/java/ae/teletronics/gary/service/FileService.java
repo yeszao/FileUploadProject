@@ -61,13 +61,6 @@ public class FileService {
         return fileRepository.save(file);
     }
 
-    public List<File> findAll() {
-        // filter by visibility, user, tags, etc.
-
-
-        return fileRepository.findAll();
-    }
-
     public File findById(String id) {
         return fileRepository.findById(id).orElse(null);
     }
