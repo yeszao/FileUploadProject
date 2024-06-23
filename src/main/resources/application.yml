@@ -8,11 +8,11 @@ spring:
     show-sql: true
   data:
     mongodb:
-      database: ${MONGO_DB_NAME:file_management}
-      host: ${MONGO_DB_HOST:localhost}
-      port: ${MONGO_DB_PORT:27017}
-      username: ${MONGO_DB_USERNAME:root}
-      password: ${MONGO_DB_PASSWORD:root}
+      uri: mongodb://root:root@localhost/files?authSource=admin
+
+  servlet:
+    multipart:
+      enabled: true
 
 springdoc:
   swagger-ui:
@@ -21,3 +21,6 @@ springdoc:
   api-docs:
     path: /v3/api-docs
     enabled: true
+
+file:
+  upload-dir: uploads/
