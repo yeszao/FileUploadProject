@@ -31,6 +31,10 @@ public class FileService {
         Files.write(this.rootLocation.resolve(filename), bytes);
     }
 
+    public byte[] getFile(String filename) throws IOException {
+        return Files.readAllBytes(this.rootLocation.resolve(filename));
+    }
+
     public File saveMultipartFile(MultipartFile multipartFile,
                                   FileVisibility visibility,
                                   List<String> tags,

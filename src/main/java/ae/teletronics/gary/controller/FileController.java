@@ -7,6 +7,7 @@ import ae.teletronics.gary.utils.HashUtil;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -48,6 +49,20 @@ public class FileController {
         fileService.storeFile(file.getBytes(), file.getOriginalFilename());
         File result = fileService.saveMultipartFile(file, visibility, tags, contentMd5);
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping(value = "/{id}/download", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public ResponseEntity<byte[]> download(@PathVariable("id") String id) throws IOException {
+        File file = fileService.findById(id);
+        if (file == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        byte[] bytes = fileService.getFile(file.getFileName());
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(file.getContentType()))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFileName() + "\"")
+                .body(bytes);
     }
 
     @GetMapping("")
