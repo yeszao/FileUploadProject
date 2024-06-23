@@ -3,9 +3,9 @@ package ae.teletronics.gary.controller;
 import ae.teletronics.gary.entity.File;
 import ae.teletronics.gary.enums.FileVisibility;
 import ae.teletronics.gary.service.FileService;
+import ae.teletronics.gary.utils.HashUtil;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
-import org.apache.commons.io.FilenameUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -34,25 +35,16 @@ public class FileController {
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<File> upload(@RequestParam("file") MultipartFile file,
                                        @RequestParam("visibility") FileVisibility visibility,
-                                       @RequestParam("tags") List<String> tags) throws IOException {
+                                       @RequestParam("tags") List<String> tags)
+            throws IOException, NoSuchAlgorithmException {
+
+        String contentMd5 = HashUtil.md5(file.getBytes());
+        if (fileService.findFirstByFileNameOrContentMd5(file.getOriginalFilename(), contentMd5) != null) {
+            return ResponseEntity.badRequest().build();
+        }
 
         fileService.storeFile(file.getBytes(), file.getOriginalFilename());
-
-        File fileInfo = new File();
-        fileInfo.setFileName(file.getOriginalFilename());
-        fileInfo.setVisibility(visibility);
-        fileInfo.setUserId("USER");
-        fileInfo.setSize(file.getSize());
-        fileInfo.setContentType(file.getContentType());
-        fileInfo.setTags(tags);
-
-        // To be more strict, we should use Tika to detect the file type
-        fileInfo.setExtension(FilenameUtils.getExtension(file.getOriginalFilename()));
-
-        fileInfo.setUploadedAt(LocalDateTime.now());
-        fileInfo.setUpdatedAt(LocalDateTime.now());
-        File result = fileService.saveFile(fileInfo);
-
+        File result = fileService.saveMultipartFile(file, visibility, tags, contentMd5);
         return ResponseEntity.ok(result);
     }
 

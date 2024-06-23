@@ -1,14 +1,18 @@
 package ae.teletronics.gary.service;
 
 import ae.teletronics.gary.entity.File;
+import ae.teletronics.gary.enums.FileVisibility;
 import ae.teletronics.gary.repository.FileRepository;
 import lombok.AllArgsConstructor;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -22,6 +26,28 @@ public class FileService {
         Files.write(this.rootLocation.resolve(filename), bytes);
     }
 
+    public File saveMultipartFile(MultipartFile multipartFile,
+                                  FileVisibility visibility,
+                                  List<String> tags,
+                                  String contentMd5) {
+        File file = new File();
+        file.setFileName(multipartFile.getOriginalFilename());
+        file.setVisibility(visibility);
+        file.setUserId("USER");
+        file.setSize(multipartFile.getSize());
+        file.setContentType(multipartFile.getContentType());
+        file.setTags(tags);
+
+        // To be more strict, we should use Tika to detect the file type
+        file.setExtension(FilenameUtils.getExtension(multipartFile.getOriginalFilename()));
+        file.setContentMd5(contentMd5);
+
+        file.setUploadedAt(LocalDateTime.now());
+        file.setUpdatedAt(LocalDateTime.now());
+
+        return fileRepository.save(file);
+    }
+
     public File saveFile(File file) {
         return fileRepository.save(file);
     }
@@ -32,5 +58,9 @@ public class FileService {
 
     public File findById(String id) {
         return fileRepository.findById(id).orElse(null);
+    }
+
+    public File findFirstByFileNameOrContentMd5(String fileName, String contentMd5) {
+        return fileRepository.findFirstByFileNameOrContentMd5(fileName, contentMd5);
     }
 }

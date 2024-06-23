@@ -21,6 +21,7 @@ public class File {
     private Long size;
     private String contentType;
     private String extension;
+    private String contentMd5;
 
     private LocalDateTime uploadedAt;
     private LocalDateTime updatedAt;
