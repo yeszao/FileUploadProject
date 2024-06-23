@@ -6,6 +6,7 @@ import ae.teletronics.gary.service.FileService;
 import ae.teletronics.gary.utils.HashUtil;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -50,8 +51,13 @@ public class FileController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<File>> getAll() {
-        List<File> files = fileService.findAll();
+    public ResponseEntity<Page<File>> getAll(
+            @RequestParam FileVisibility visibility,
+            @RequestParam List<String> tags,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "uploadedAt") String sortBy) {
+        Page<File> files = fileService.getFiles(visibility, tags, page, size, sortBy);
         return ResponseEntity.ok(files);
     }
 
