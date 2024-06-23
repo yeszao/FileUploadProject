@@ -5,6 +5,7 @@ import ae.teletronics.gary.enums.FileVisibility;
 import ae.teletronics.gary.service.FileService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -44,7 +45,9 @@ public class FileController {
         fileInfo.setSize(file.getSize());
         fileInfo.setContentType(file.getContentType());
         fileInfo.setTags(tags);
-        fileInfo.setExtension(file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf('.')));
+
+        // To be more strict, we should use Tika to detect the file type
+        fileInfo.setExtension(FilenameUtils.getExtension(file.getOriginalFilename()));
 
         fileInfo.setUploadedAt(LocalDateTime.now());
         fileInfo.setUpdatedAt(LocalDateTime.now());
